@@ -1,7 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = '7786203942:AAFTGMQqvCcg05kUFG3SNrbadVNzr1hyVyg'
+TOKEN = '7851691095:AAFtAcAPeIM9oAhYo33VINOCtoKu4ZUw6-E'
+
 AGREEMENT_LINK = 'https://alenushka-pediatr.ru/personal-data-agreement'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
