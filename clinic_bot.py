@@ -1,11 +1,12 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 
 TOKEN = '7851691095:AAFtAcAPeIM9oAhYo33VINOCtoKu4ZUw6-E'  # ← ваш токен
-ADMIN_ID = 5032722703  # ← Telegram ID администратора
+ADMIN_ID = 5032722703  # ← ваш Telegram ID
 AGREEMENT_LINK = 'https://alenushka-pediatr.ru/personal-data-agreement'
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# Главное сообщение с кнопками
+async def send_confirmation_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_firstname = update.effective_user.first_name or "Уважаемый пациент"
 
     message = (
@@ -27,6 +28,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
+# Ответ на нажатие кнопок
 async def button_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -48,10 +50,17 @@ async def button_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text=f"❌ Пациент {full_name} (@{username}) отменил приём"
         )
 
+# Обработка любого текста (включая смайлик 😊)
+async def handle_any_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await send_confirmation_message(update, context)
+
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
+
+    app.add_handler(CommandHandler("start", send_confirmation_message))
     app.add_handler(CallbackQueryHandler(button_response))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_any_text))
+
     print("Бот запущен... Нажмите Ctrl+C для остановки.")
     app.run_polling()
 
