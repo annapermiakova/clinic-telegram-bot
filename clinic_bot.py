@@ -7,18 +7,13 @@ AGREEMENT_LINK = 'https://alenushka-pediatr.ru/personal-data-agreement'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_firstname = update.effective_user.first_name or "Уважаемый пациент"
-    time_info = ""
-
-    # Если админ написал /start 15:30 — добавляем это время в текст
-    if context.args:
-        time_info = f" в {context.args[0]}"
 
     message = (
         f"👋 Здравствуйте, {user_firstname}!\n\n"
         f"Вы обратились в клинику «Алёнушка».\n"
         f"📄 Ознакомьтесь с нашей политикой обработки персональных данных:\n"
         f"{AGREEMENT_LINK}\n\n"
-        f"Вы записаны на приём завтра{time_info}. Подтвердите, пожалуйста, своё посещение:"
+        f"Вы записаны на приём завтра. Подтвердите, пожалуйста, своё посещение:"
     )
 
     keyboard = [
@@ -26,14 +21,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("❌ Не приду", callback_data='no')]
     ]
 
-    if update.message:
-        await update.message.reply_text(message, reply_markup=InlineKeyboardMarkup(keyboard))
-    else:
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=message,
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=message,
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 
 async def button_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
